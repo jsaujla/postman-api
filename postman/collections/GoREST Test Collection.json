@@ -1,0 +1,393 @@
+{
+	"info": {
+		"_postman_id": "2b304f7c-7849-4aee-8d8f-d7822b3bf1bb",
+		"name": "GoREST Test Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "32182428-2b304f7c-7849-4aee-8d8f-d7822b3bf1bb"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6e972d2f-5307-481d-8d02-443bc50758e9",
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"const uniqueEmailToCreateUser = pm.variables.get(\"uniqueEmailToCreateUser\");\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.collectionVariables.set(\"userIdFromCreateUser\", jsonData.id);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test data type of the response is an object\", function () {\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Under response boby, the value of id, name, email, gender and status is valid\", function () {\r",
+									"    pm.expect(jsonData.id).to.match(/^[0-9]{7}$/);\r",
+									"    pm.expect(jsonData.name).to.eql(\"Tester\");\r",
+									"    pm.expect(jsonData.email).to.eq(uniqueEmailToCreateUser);\r",
+									"    pm.expect(jsonData.gender).to.eq(\"male\");\r",
+									"    pm.expect(jsonData.status).to.eq(\"active\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"var schema = {\r",
+									"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"name\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"email\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"gender\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"status\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"name\",\r",
+									"    \"email\",\r",
+									"    \"gender\",\r",
+									"    \"status\"\r",
+									"  ]\r",
+									"};\r",
+									"\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a4eeea24-b404-4ea3-8226-645de4208fe3",
+								"exec": [
+									"const moment = require('moment');\r",
+									"const currentDateAndTime = moment().format(\"YYYYMMDDhhmms\");;\r",
+									"pm.collectionVariables.set(\"currentDateAndTime\", currentDateAndTime);\r",
+									"console.log(\"Users - Create User - currentDateAndTime is \" + moment().format(\"YYYYMMDDhhmms\"));\r",
+									"\r",
+									"pm.collectionVariables.set(\"uniqueEmailToCreateUser\", \"test\" + currentDateAndTime + \"@test.test\");\r",
+									"\r",
+									"// const random = Math.random().toString(36).substring(2);\r",
+									"// let uniqueEmail = \"test\" + random + \"@test.com\";\r",
+									"// let uniqueName= \"Test\" + random;\r",
+									"\r",
+									"// pm.collectionVariables.set(\"uniqueEmail\", uniqueEmail);\r",
+									"// pm.collectionVariables.set(\"uniqueName\", uniqueName);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "92b5c2e5-6b7a-4b82-8e65-e3f697914841",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer b88a60940dc190cabd4d2fc83f0035779e965ab92f7195f46725997c4b3ed1cd",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tester\",\r\n    \"email\": \"{{uniqueEmailToCreateUser}}\",\r\n    \"gender\": \"male\",\r\n    \"status\": \"active\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/public/v2/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"v2",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "011f6f4a-1ae3-44ee-9517-2ddd677f83f2",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "a27c6510-77a0-46f0-a6e7-09c4c010aaa6",
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"const uniqueEmailToCreateUser = pm.variables.get(\"uniqueEmailToCreateUser\");\r",
+									"const userIdFromCreateUser = pm.variables.get(\"userIdFromCreateUser\");\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test data type of the response is an object\", function () {\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Under response boby, the value of id, name, email, gender and status is valid\", function () {\r",
+									"    pm.expect(jsonData.id).to.eql(userIdFromCreateUser);\r",
+									"    pm.expect(jsonData.name).to.eql(\"Tester\");\r",
+									"    pm.expect(jsonData.email).to.eq(uniqueEmailToCreateUser);\r",
+									"    pm.expect(jsonData.gender).to.eq(\"male\");\r",
+									"    pm.expect(jsonData.status).to.eq(\"active\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "a794c82d-b9cc-48a7-a54f-326ab4eb685e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/public/v2/users/{{userIdFromCreateUser}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"v2",
+								"users",
+								"{{userIdFromCreateUser}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e277d5f2-f282-46a2-8486-5e2b896999ba",
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"var userIdFromCreateUser = pm.variables.get(\"userIdFromCreateUser\");\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Test data type of the response is an object\", function () {\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Under response boby, the values of name and gender updated\", function () {\r",
+									"    pm.expect(jsonData.id).to.eql(userIdFromCreateUser);\r",
+									"    pm.expect(jsonData.name).to.eql(\"Updated Tester\");\r",
+									"    pm.expect(jsonData.gender).to.eql(\"female\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "ca47c65d-ddcd-4a45-962e-2c08b6ad3cfa",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer b88a60940dc190cabd4d2fc83f0035779e965ab92f7195f46725997c4b3ed1cd",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Tester\",\r\n    \"email\": \"Test20240110112954@test.test\",\r\n    \"gender\": \"female\",\r\n    \"status\": \"active\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/public/v2/users/{{userIdFromCreateUser}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"v2",
+								"users",
+								"{{userIdFromCreateUser}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "551a82b3-94b5-4089-bb11-2ee60b2a6ae8",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "6685da21-4f76-42a4-b10d-3eeed7dfb8d5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/public/v2/users/{{userIdFromCreateUser}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"v2",
+								"users",
+								"{{userIdFromCreateUser}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "2b58ebd3-5b5c-4de8-9bec-471b00b2f28d",
+			"auth": {
+				"type": "bearer"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4c20f91f-0764-4a9a-b801-0eca93b135e4",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3490b5d8-8ec6-46c1-bb7d-38c357506346",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"id": "863d47da-0db4-4f91-bd22-0627663f6dce",
+			"key": "userIdFromCreateUser",
+			"value": ""
+		},
+		{
+			"id": "82773bb8-4b88-4d71-a9c8-bca6d6cadc5b",
+			"key": "currentDateAndTime",
+			"value": ""
+		},
+		{
+			"id": "072b0246-a555-42a3-9bb3-efea864c1ba3",
+			"key": "uniqueEmail",
+			"value": ""
+		},
+		{
+			"id": "e81779e9-0f54-4250-ac32-54606e991cff",
+			"key": "uniqueName",
+			"value": ""
+		},
+		{
+			"id": "c0ad50f8-0ef6-4329-ae87-fb7a5ed045d3",
+			"key": "uniqueEmailToCreateUser",
+			"value": ""
+		}
+	]
+}
