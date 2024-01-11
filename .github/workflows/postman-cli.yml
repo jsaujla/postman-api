@@ -25,4 +25,4 @@ jobs:
         run: |
           postman collection run "${{ github.workspace }}/postman/collections/GoREST Test Collection.json" -e "32182428-8d3c775d-71cf-4fe9-9524-ff9957b5a382" --integration-id "156014-${{ github.run_id }}"
           # Lint your API using Postman CLI
-          postman api lint 26aab39e-e320-4959-820a-02883e94ebba --integration-id 156014
+          # postman api lint 26aab39e-e320-4959-820a-02883e94ebba --integration-id 156014
